@@ -7,6 +7,7 @@ import { useToast } from "primevue/usetoast";
 
 const toast = useToast();
 const historyStore = useHistory();
+const dt = ref();
 
 const filters = ref({
     'global': {value: null, matchMode: FilterMatchMode.CONTAINS},
@@ -23,6 +24,17 @@ const searchParam = reactive({
     end_at: null
 });
 
+const deleteSearchParam = async() => {
+    searchParam.user_id = null;
+    searchParam.question = null;
+    searchParam.answer = null;
+    searchParam.start_at = null;
+    searchParam.end_at = null;
+}
+
+const exportCSV = async() => {
+    await historyStore.apiExportCSV(searchParam)
+};
 
 const refreshHistory = async() => {
     await historyStore.apiGetListHistory(searchParam);
@@ -84,7 +96,26 @@ onMounted(refreshHistory)
                         <div class="align-items-center gap-2">
                             <div class="flex justify-content-center align-items-center p-2" style="margin-left: auto">
                                 <Toast />
-                                <Button label="Tìm kiếm" @click="searchHistory"></Button>
+                                <Button severity="success" icon="pi pi-search" label="Tìm kiếm" @click="searchHistory"></Button>
+                            </div>
+                        </div>
+
+                        <div class="align-items-center gap-2">
+                            <div class="flex justify-content-center align-items-center p-2" style="margin-left: auto">
+                                <Toast />
+                                <Button severity="danger" icon="pi pi-times"label="Xóa tìm kiếm" @click="deleteSearchParam"></Button>
+                            </div>
+                        </div>
+
+                        <div class="align-items-center gap-2">
+                            <div class="flex justify-content-center align-items-center p-2" style="margin-left: auto">
+                                <Button
+                                    label="Xuất ra file CSV"
+                                    icon="pi pi-external-link"
+                                    severity="success"
+                                    class="mr-2"
+                                    @click="exportCSV"
+                                ></Button>
                             </div>
                         </div>
                     </div>
