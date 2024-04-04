@@ -44,7 +44,7 @@ const login = async() => {
 			<img :src="bg">
 		</div>
 		<div class="login-content">
-			<form @submit.prevent="login">
+			<form>
 				<img :src="avatar">
 				<h2 class="title">Welcome</h2>
            		<div class="input-div one">
@@ -64,7 +64,7 @@ const login = async() => {
             	   </div>
             	</div>
 				<Toast/>
-            	<input type="submit" class="btn" value="Login">
+				<Button severity="success" class="btn" icon="pi pi-sign-in" label="Đăng nhập" @click="login"></Button>
             </form>
         </div>
     </div>

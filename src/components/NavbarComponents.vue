@@ -82,12 +82,6 @@ const updatenew_password = async() => {
     
 }
 
-
-
-const navigate = (route: any) => {
-    router.push(route);
-}
-
 const autoRefresh = async() => {
     await userStore.apiGetCurrentUser();
 } 
@@ -117,19 +111,24 @@ onMounted(autoRefresh)
 <div style="position: sticky; top: 0;">
     <Menubar :model="items" class="w-full">
         <template #item="{ item, props, root }">
-            <a v-ripple class="flex align-items-center" v-bind="props.action" @click="navigate(item.route)">
+            <router-link 
+                :to="item.route" 
+                class="flex align-items-center" 
+                v-bind="props.action" 
+                :class="{ active: $route.path === item.route }"
+            >
                 <span :class="item.icon" />
                 <span class="ml-2">{{ item.label }}</span>
                 <Badge v-if="item.badge" :class="{ 'ml-auto': !root, 'ml-2': root }" :value="item.badge" />
                 <span v-if="item.shortcut" class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1">{{ item.shortcut }}</span>
-            </a>
+            </router-link>
         </template>
         
         <template #end>
             <div class="flex align-items-center gap-2">
                 <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" shape="circle" />
                 <div class="hover-container" @mouseover="showButton = true" @mouseleave="showButton = false">
-                    <h4>{{ userStore.getCurrentUser.email }}</h4>
+                    <h4>{{ userStore.getCurrentUser.full_name }}</h4>
                     <Button v-show="showButton" label="Đổi mật khẩu" severity="info" icon="pi pi-refresh" @click="changePassword"/>
                 </div>
                 <Toast/>
@@ -164,7 +163,7 @@ onMounted(autoRefresh)
         <Dialog v-model:visible="logoutDialog" :style="{width: '450px'}" header="Xác nhận đăng xuất" :modal="true">
             <div class="confirmation-content">
                 <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-                <span>Bạn chắc chắn muốn đăng xuất?</span>
+                <span>Bạn chắc chắn muốn đăng xuất không?</span>
             </div>
             <template #footer>
                 <Button label="Không" icon="pi pi-times" text @click="hideLogoutDialog"/>
@@ -190,5 +189,9 @@ onMounted(autoRefresh)
 
 .hover-container:hover button {
     display: block;
+}
+
+.active {
+    background-color: aliceblue;
 }
 </style>

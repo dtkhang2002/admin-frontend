@@ -11,6 +11,7 @@ export interface UserData {
 
 export interface User {
     id: number;
+    full_name: string;
     email: string;
     role_id: number;
     created_at: string;
@@ -24,6 +25,7 @@ export interface UserLogin {
 }
 
 export interface UserCreate {
+    full_name: string,
     email: string;
     password: string;
     role_id: number;

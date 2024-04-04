@@ -24,7 +24,7 @@ const searchParam = reactive({
     page: 1,
     size: 10,
     file_name: null,
-    email: null
+    user_name: null
 });
 
 const fileTrainUpload = ref({
@@ -79,7 +79,7 @@ const searchFile = async() => {
 }
 
 const deleteSearchParam = async() => {
-    searchParam.email = null;
+    searchParam.user_name = null;
     searchParam.file_name = null;
 }
 
@@ -151,8 +151,8 @@ onMounted(refreshTrainFile)
                     <div class="flex flex-wrap gap-2 align-items-center justify-content-between">
                         <div class="flex justify-content-center align-items-center gap-2">
                             <div class="InputGroup">
-                                <label for="user-id" class="p-2">Email: </label>
-                                <InputText id="user-id" placeholder="Email" v-model="searchParam.email" class="p-2"/>
+                                <label for="user-id" class="p-2">Người tải: </label>
+                                <InputText id="user-id" placeholder="Người tải" v-model="searchParam.user_name" class="p-2"/>
                             </div>
 
                             <div class="InputGroup">
@@ -183,10 +183,10 @@ onMounted(refreshTrainFile)
                     </template>
                 </Column>
 
-                <Column field="file_name" header="Tên file" style="width: 20%"></Column>
-                <Column field="file_path" header="Đường dẫn file" style="width: 20%"></Column>
+                <Column field="file_name" header="Tên file" style="width: 10%"></Column>
+                <Column field="file_path" header="Đường dẫn file" style="width: 10%"></Column>
                 <Column field="created_at" header="Thời gian tải lên" style="width: 10%"></Column>
-                <Column field="email" header="Người tải lên" style="width: 5%"></Column>
+                <Column field="user_name" header="Người tải lên" style="width: 10%"></Column>
                 <Column :exportable="false" style="width: 6%">
                     <template #body="slotProps">
                         <Toast/>

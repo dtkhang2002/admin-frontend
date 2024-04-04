@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
 import type {PageState} from "primevue/paginator";
 import { useUser } from '../stores/userStore';
@@ -15,6 +15,7 @@ const submitted = ref(false)
 const user = ref(
     {
         id: 0,
+        full_name: '',
         email: '',
         password: '',
         role_id: 0
@@ -59,6 +60,7 @@ const updateUsers = async() => {
         }
         editDialog.value = false;
         await refreshUser();
+        await userStore.apiGetCurrentUser();
         user.value.email = '';
         user.value.password = '';
         user.value.role_id = 0;
@@ -73,6 +75,7 @@ const confirmDeleteUser = async(users: any) => {
 
 const hideEdiDialog = async() => {
     user.value.email = '';
+    user.value.full_name = '';
     user.value.password = '';
     user.value.role_id = 0;
     editDialog.value = false;
@@ -93,6 +96,15 @@ const deleteStaff = async() => {
 const openNewUser = async() => {
     editDialog.value = true
 }
+
+watch(editDialog, (newValue) => {
+      if (!newValue) {
+        user.value.email = '';
+        user.value.full_name = '';
+        user.value.password = '';
+        user.value.role_id = 0;
+      }
+    });
 
 onMounted(refreshUser)
 </script>
@@ -125,6 +137,7 @@ onMounted(refreshUser)
                     </div>
                 </template>
                 <Column field="id" header="Id" style="width: 5%"></Column>
+                <Column field="full_name" header="Họ và tên" style="width: 10%"></Column>
                 <Column field="email" header="Email" style="width: 10%"></Column>
                 <Column field="role_name" header="Vai trò" style="width: 5%">
                     <template #body="slotProps">
@@ -148,6 +161,11 @@ onMounted(refreshUser)
                 <label for="email">Email</label>
                 <InputText id="email" type="email"v-model.trim="user.email" required="true" autofocus :class="{'p-invalid': submitted && !user.email}" />
                 <small class="p-error" v-if="submitted && !user.email">Email bắt buộc.</small>
+            </div>
+            <div class="field">
+                <label for="full_name">Họ và tên</label>
+                <InputText id="full_name" type="text"v-model.trim="user.full_name" required="true" autofocus :class="{'p-invalid': submitted && !user.full_name}" />
+                <small class="p-error" v-if="submitted && !user.full_name">Họ và tên bắt buộc.</small>
             </div>
             <div class="field">
                 <label for="password">Password</label>

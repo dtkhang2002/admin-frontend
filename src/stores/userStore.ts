@@ -14,6 +14,7 @@ export const useUser = defineStore({
             pages: 0,
             pageContent: {
                 id: 0,
+                full_name: '',
                 email: '',
                 role_id: 0,
                 created_at: '',
