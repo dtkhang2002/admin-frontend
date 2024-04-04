@@ -65,3 +65,11 @@ erDiagram
         varchar(255) document
         uuid collection_uuid FK
     }
+
+    Token {
+        int id PK
+        text access_token UK
+        text refresh_token UK
+        timestamp created_at
+        timestamp updated_at
+    }
