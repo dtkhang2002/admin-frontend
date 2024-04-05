@@ -65,60 +65,62 @@ onMounted(refreshHistory)
                 :filters="filters"
                 autoLayout="true">
                 <template #header>
-                    <div class="flex flex-wrap gap-2 align-items-center justify-content-between">
-                        <div class="flex flex-wrap gap-2">
-                            <div class="InputGroup">
-                                <label for="user-id-1" class="p-2">Mã người hỏi: </label>
-                                <InputText id="user-id-1" v-model="searchParam.user_id" class="p-2" placeholder="Mã người hỏi"/>
+                    <form @submit.prevent="searchHistory">
+                        <div class="flex flex-wrap gap-2 align-items-center justify-content-between">
+                            <div class="flex flex-wrap gap-2">
+                                <div class="InputGroup">
+                                    <label for="user-id-1" class="p-2">Mã người hỏi: </label>
+                                    <InputText id="user-id-1" v-model="searchParam.user_id" class="p-2" placeholder="Mã người hỏi"/>
+                                </div>
+
+                                <div class="InputGroup">
+                                    <label for="file-name-1" class="p-2">Câu hỏi: </label>
+                                    <InputText id="file-name-1" placeholder="Câu hỏi" v-model="searchParam.question" class="p-2"/>
+                                </div>
+
+                                <div class="InputGroup">
+                                    <label for="user-id-2" class="p-2">Câu trả lời: </label>
+                                    <InputText id="user-id-2" placeholder="Câu trả lời" v-model="searchParam.answer" class="p-2"/>
+                                </div>
+
+                                <div class="InputGroup">
+                                    <label for="user-id-3" class="p-2">Từ: </label>
+                                    <Calendar id="calendar-24h" v-model="searchParam.start_at" showTime hourFormat="24" />
+                                </div>
+
+                                <div class="InputGroup">
+                                    <label for="file-name-3" class="p-2">Đến: </label>
+                                    <Calendar id="calendar-24h" v-model="searchParam.end_at" showTime hourFormat="24" />
+                                </div>
                             </div>
 
-                            <div class="InputGroup">
-                                <label for="file-name-1" class="p-2">Câu hỏi: </label>
-                                <InputText id="file-name-1" placeholder="Câu hỏi" v-model="searchParam.question" class="p-2"/>
+                            <div class="align-items-center gap-2">
+                                <div class="flex justify-content-center align-items-center p-2" style="margin-left: auto">
+                                    <Toast />
+                                    <Button severity="success" icon="pi pi-search" label="Tìm kiếm" type="submit"></Button>
+                                </div>
                             </div>
 
-                            <div class="InputGroup">
-                                <label for="user-id-2" class="p-2">Câu trả lời: </label>
-                                <InputText id="user-id-2" placeholder="Câu trả lời" v-model="searchParam.answer" class="p-2"/>
+                            <div class="align-items-center gap-2">
+                                <div class="flex justify-content-center align-items-center p-2" style="margin-left: auto">
+                                    <Toast />
+                                    <Button severity="danger" icon="pi pi-times"label="Xóa tìm kiếm" @click="deleteSearchParam"></Button>
+                                </div>
                             </div>
 
-                            <div class="InputGroup">
-                                <label for="user-id-3" class="p-2">Từ: </label>
-                                <Calendar id="calendar-24h" v-model="searchParam.start_at" showTime hourFormat="24" />
-                            </div>
-
-                            <div class="InputGroup">
-                                <label for="file-name-3" class="p-2">Đến: </label>
-                                <Calendar id="calendar-24h" v-model="searchParam.end_at" showTime hourFormat="24" />
+                            <div class="align-items-center gap-2">
+                                <div class="flex justify-content-center align-items-center p-2" style="margin-left: auto">
+                                    <Button
+                                        label="Xuất ra file CSV"
+                                        icon="pi pi-external-link"
+                                        severity="success"
+                                        class="mr-2"
+                                        @click="exportCSV"
+                                    ></Button>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="align-items-center gap-2">
-                            <div class="flex justify-content-center align-items-center p-2" style="margin-left: auto">
-                                <Toast />
-                                <Button severity="success" icon="pi pi-search" label="Tìm kiếm" @click="searchHistory"></Button>
-                            </div>
-                        </div>
-
-                        <div class="align-items-center gap-2">
-                            <div class="flex justify-content-center align-items-center p-2" style="margin-left: auto">
-                                <Toast />
-                                <Button severity="danger" icon="pi pi-times"label="Xóa tìm kiếm" @click="deleteSearchParam"></Button>
-                            </div>
-                        </div>
-
-                        <div class="align-items-center gap-2">
-                            <div class="flex justify-content-center align-items-center p-2" style="margin-left: auto">
-                                <Button
-                                    label="Xuất ra file CSV"
-                                    icon="pi pi-external-link"
-                                    severity="success"
-                                    class="mr-2"
-                                    @click="exportCSV"
-                                ></Button>
-                            </div>
-                        </div>
-                    </div>
+                    </form>
                 </template>
 
                 <Column field="id" header="Id" style="width: 5%"></Column>

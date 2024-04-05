@@ -148,28 +148,30 @@ onMounted(refreshTrainFile)
                 :filters="filters"
                 autoLayout="true">
                 <template #header>
-                    <div class="flex flex-wrap gap-2 align-items-center justify-content-between">
-                        <div class="flex justify-content-center align-items-center gap-2">
-                            <div class="InputGroup">
-                                <label for="user-id" class="p-2">Người tải: </label>
-                                <InputText id="user-id" placeholder="Người tải" v-model="searchParam.user_name" class="p-2"/>
-                            </div>
+                    <form @submit.prevent="searchFile">
+                        <div class="flex flex-wrap gap-2 align-items-center justify-content-between">
+                            <div class="flex justify-content-center align-items-center gap-2">
+                                <div class="InputGroup">
+                                    <label for="user-id" class="p-2">Người tải: </label>
+                                    <InputText id="user-id" placeholder="Người tải" v-model="searchParam.user_name" class="p-2"/>
+                                </div>
 
-                            <div class="InputGroup">
-                                <label for="file-name" class="p-2">Tên file: </label>
-                                <InputText id="file-name" placeholder="Tên file" v-model="searchParam.file_name" class="p-2"/>
-                            </div>
+                                <div class="InputGroup">
+                                    <label for="file-name" class="p-2">Tên file: </label>
+                                    <InputText id="file-name" placeholder="Tên file" v-model="searchParam.file_name" class="p-2"/>
+                                </div>
 
-                            <div class="flex justify-content-center align-items-center p-2" style="margin-left: auto">
-                                <Toast />
-                                <Button severity="success" icon="pi pi-search" label="Tìm kiếm" @click="searchFile"></Button>
-                            </div>
-                        
-                            <div class="flex justify-content-center align-items-center p-2" style="margin-left: auto">
-                                <Button severity="danger" icon="pi pi-times"label="Xóa tìm kiếm" @click="deleteSearchParam"></Button>
+                                <div class="flex justify-content-center align-items-center p-2" style="margin-left: auto">
+                                    <Toast />
+                                    <Button severity="success" icon="pi pi-search" label="Tìm kiếm" type="submit"></Button>
+                                </div>
+                            
+                                <div class="flex justify-content-center align-items-center p-2" style="margin-left: auto">
+                                    <Button severity="danger" icon="pi pi-times"label="Xóa tìm kiếm" @click="deleteSearchParam"></Button>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </form>
                     
                 </template>
 

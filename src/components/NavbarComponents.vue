@@ -126,7 +126,7 @@ onMounted(autoRefresh)
         
         <template #end>
             <div class="flex align-items-center gap-2">
-                <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" shape="circle" />
+                <Avatar icon="pi pi-user" class="mr-2" shape="circle" />
                 <div class="hover-container" @mouseover="showButton = true" @mouseleave="showButton = false">
                     <h4>{{ userStore.getCurrentUser.full_name }}</h4>
                     <Button v-show="showButton" label="Đổi mật khẩu" severity="info" icon="pi pi-refresh" @click="changePassword"/>

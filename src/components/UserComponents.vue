@@ -7,11 +7,14 @@ import { useRole } from '../stores/roleStore';
 import { useToast } from "primevue/usetoast";
 
 const toast = useToast();
-const userStore = useUser()
-const roleStore = useRole()
-const editDialog = ref(false)
-const deleteDialog = ref(false)
-const submitted = ref(false)
+const userStore = useUser();
+const roleStore = useRole();
+const editDialog = ref(false);
+const deleteDialog = ref(false);
+const submitted = ref(false);
+const dialogHeader = reactive({
+    header: ''
+});
 const user = ref(
     {
         id: 0,
@@ -20,9 +23,9 @@ const user = ref(
         password: '',
         role_id: 0
     }
-)
+);
 
-const role_list = computed(() => roleStore.getListRole)
+const role_list = computed(() => roleStore.getListRole);
 
 const filters = ref({
     'global': {value: null, matchMode: FilterMatchMode.CONTAINS},
@@ -31,7 +34,7 @@ const filters = ref({
 const searchParam = reactive({
     page: 1,
     size: 10
-})
+});
 
 const changePage = async(event: PageState) => {
     searchParam.page = event.page + 1;
@@ -44,8 +47,9 @@ const refreshUser = async() => {
 }
 
 const updateUser = async(users: any) => {
-    user.value = {...users}
-    editDialog.value = true
+    dialogHeader.header = 'Cập nhật thông tin người dùng';
+    user.value = {...users};
+    editDialog.value = true;
 }
 
 const updateUsers = async() => {
@@ -94,7 +98,8 @@ const deleteStaff = async() => {
 }
 
 const openNewUser = async() => {
-    editDialog.value = true
+    dialogHeader.header = 'Đăng ký người dùng mới';
+    editDialog.value = true;
 }
 
 watch(editDialog, (newValue) => {
@@ -150,13 +155,13 @@ onMounted(refreshUser)
                 <Column :exportable="false" style="width: 3%">
                     <template #body="slotProps">
                         <Toast/>
-                        <Button v-if="slotProps.data.role_id == 2" icon="pi pi-user-edit" outlined rounded class="mr-2" @click="updateUser(slotProps.data)" />
-                        <Button v-if="slotProps.data.role_id == 2" icon="pi pi-trash" outlined rounded severity="danger" @click="confirmDeleteUser(slotProps.data)" />
+                        <Button v-if="slotProps.data.role_id == 2" icon="pi pi-user-edit" outlined rounded class="mr-2" @click="updateUser(slotProps.data)"></Button>
+                        <Button v-if="slotProps.data.role_id == 2" icon="pi pi-trash" outlined rounded severity="danger" @click="confirmDeleteUser(slotProps.data)"></Button>
                     </template>
                 </Column>
             </DataTable>
         </div>
-        <Dialog v-model:visible="editDialog" :style="{width: '1000px'}" header="Cập nhật thông tin người dùng" :modal="true" class="p-fluid">
+        <Dialog v-model:visible="editDialog" :style="{width: '1000px'}" :header="dialogHeader.header" :modal="true" class="p-fluid">
             <div class="field">
                 <label for="email">Email</label>
                 <InputText id="email" type="email"v-model.trim="user.email" required="true" autofocus :class="{'p-invalid': submitted && !user.email}" />

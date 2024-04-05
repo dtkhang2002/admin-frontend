@@ -7,6 +7,7 @@ erDiagram
     User {
         integer id PK
         varchar(255) email UK
+        varchar(255) full_name
         varchar(255) password
         timestamp created_at
         timestamp updated_at
