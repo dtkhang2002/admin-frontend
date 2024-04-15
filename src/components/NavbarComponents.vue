@@ -90,7 +90,8 @@ const signOut = async() => {
     logoutDialog.value = false;
     toast.add({ severity: 'success', summary: 'Đăng xuất', detail: 'Đăng xuất thành công', life: 3000 });
     await nextTick();
-    localStorage.removeItem("access_token");
+    sessionStorage.clear()
+    localStorage.clear();
     router.push("/login");
 }
 

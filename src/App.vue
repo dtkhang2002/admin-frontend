@@ -7,8 +7,11 @@ const route = useRoute();
 const router = useRouter();
 
 const returnLoginPage = async() => {
-    if (localStorage.getItem("") == null && localStorage.getItem("access_token") == null) {
-        router.push("/login")
+    const token = localStorage.getItem("access_token");
+    if ((!token || isTokenExpired(token))) {
+        localStorage.clear();
+        sessionStorage.clear();
+        router.push("/login");
     } else {
         const savedPath = sessionStorage.getItem('savedPath');
         if (savedPath) {
@@ -16,6 +19,16 @@ const returnLoginPage = async() => {
         } else {
             router.push("/");
         }
+    }
+}
+
+const isTokenExpired = (token: string): boolean => {
+    const jwt = JSON.parse(atob(token.split('.')[1]));
+    const currentTime = Math.floor(Date.now() / 1000);
+    if (jwt.exp < currentTime) {
+        return true;
+    } else {
+        return false;
     }
 }
 
