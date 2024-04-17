@@ -10,23 +10,28 @@ export const router = createRouter({
     routes: [
         {
             path: "/",
-            component: TrainFile
+            component: TrainFile,
+            meta: { requiresAuth: true }
         },
         {
             path: "/file",
-            component: TrainFile
+            component: TrainFile,
+            meta: { requiresAuth: true }
         },
         {
             path: "/user",
-            component: User
+            component: User,
+            meta: { requiresAuth: true }
         },
         {
             path: "/settings",
-            component: Settings
+            component: Settings,
+            meta: { requiresAuth: true }
         },
         {
             path: "/history",
-            component: History
+            component: History,
+            meta: { requiresAuth: true }
         },
         {
             path: "/login",
@@ -40,3 +45,26 @@ export const router = createRouter({
         }
     ]
 })
+
+const isTokenExpired = (token: string): boolean => {
+    const jwt = JSON.parse(atob(token.split('.')[1]));
+    const currentTime = Math.floor(Date.now() / 1000);
+    if (jwt.exp < currentTime) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+router.beforeEach((to, _from, next) => {
+    const token = localStorage.getItem("access_token");
+
+    if (to.meta.requiresAuth && (!token || isTokenExpired(token))) {
+        sessionStorage.setItem('savedPath', to.path);
+        next({ path: '/login' });
+    } else if (to.meta.guest && token && !isTokenExpired(token)) {
+        next({ path: '/' });
+    } else {
+        next();
+    }
+});

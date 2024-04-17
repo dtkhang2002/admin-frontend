@@ -39,8 +39,9 @@ export const useHistory = defineStore({
             this.page = response.data.page;
             this.size = response.data.size;
         },
-        async apiGetHistoryMe() {
+        async apiGetHistoryMe(params: object) {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/history/me`, {
+                params,
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem("access_token")}`
                 }
@@ -48,6 +49,8 @@ export const useHistory = defineStore({
             this.items = response.data.items;
             this.page = response.data.page;
             this.size = response.data.size;
+            this.total = response.data.total;
+            this.pages = response.data.pages;
         },
         async deleteHistoryMe() {
             await axios.delete(`${import.meta.env.VITE_API_URL}/history/me`, {

@@ -12,7 +12,9 @@ const toast = useToast();
 const userStore = useUser();
 const email = ref("");
 const password = ref("");
+const submitted = ref(false);
 const login = async() => {
+	submitted.value = true;
     let userLoginDetails: UserLogin = {
         email: email.value,
         password: password.value
@@ -52,7 +54,8 @@ const login = async() => {
            		   		<i class="fas fa-user"></i>
            		   </div>
            		   <div class="div">
-           		   		<InputText type="text" class="input" placeholder="Email" v-model="email"/>
+							<InputText type="text" class="input" placeholder="Email" v-model="email" required="true" autofocus :class="{'p-invalid': submitted && !email}"/>
+							<small class="p-error" v-if="submitted && !email">Email bắt buộc.</small>
            		   </div>
            		</div>
            		<div class="input-div pass">
@@ -60,7 +63,8 @@ const login = async() => {
            		    	<i class="fas fa-lock"></i>
            		   </div>
            		   <div class="div">
-           		    	<InputText type="password" class="input" placeholder="Password" v-model="password"/>
+           		    	<InputText type="password" class="input" placeholder="Mật khẩu" v-model="password" required="true" autofocus :class="{'p-invalid': submitted && !password}"/>
+						<small class="p-error" v-if="submitted && !password">Mật khẩu bắt buộc.</small>
             	   </div>
             	</div>
 				<Toast/>

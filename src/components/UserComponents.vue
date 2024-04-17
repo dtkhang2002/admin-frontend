@@ -21,6 +21,7 @@ const user = ref(
         full_name: '',
         email: '',
         password: '',
+        confirm_password: '',
         role_id: 0
     }
 );
@@ -52,25 +53,49 @@ const updateUser = async(users: any) => {
     editDialog.value = true;
 }
 
+const checkPassword = (user: any) => {
+    const summary = user.value.id ? 'Cập nhật' : 'Đăng kí';
+    const detail = user.value.id ? 'Cập nhật người dùng mới thất bại, mật khẩu mới không khớp' : 'Đăng kí người dùng mới thất bại, mật khẩu mới không khớp';
+
+    if (user.value.password !== user.value.confirm_password) {
+        toast.add({ severity: 'error', summary, detail, life: 3000 });
+        return false;
+    }
+    return true;
+}
+
+const resetUser = async () => {
+    editDialog.value = false;
+    await refreshUser();
+    await userStore.apiGetCurrentUser();
+    user.value.email = '';
+    user.value.password = '';
+    user.value.confirm_password = '';
+    user.value.role_id = 0;
+}
+
 const updateUsers = async() => {
     submitted.value = true;
-    if(user.value.email.trim() && user.value.password.trim()) {
-        if (user.value.id) {
-            await userStore.apiUpdateUserById(user.value.id, user.value);
-            toast.add({ severity: 'success', summary: 'Cập nhật', detail: 'Cập nhật người dùng thành công', life: 3000 });
-        } else {
-            await userStore.apiRegister(user.value);
-            toast.add({ severity: 'success', summary: 'Đăng ký', detail: 'Đăng ký người dùng mới thành công', life: 3000 });
+    if(user.value.email.trim() && user.value.password.trim() && user.value.confirm_password.trim()) {
+        try {
+            if (user.value.id) {
+                if (!checkPassword(user)) return;
+                await userStore.apiUpdateUserById(user.value.id, user.value);
+                toast.add({ severity: 'success', summary: 'Cập nhật', detail: 'Cập nhật người dùng thành công', life: 3000 });
+            } else {
+                await userStore.apiRegister(user.value);
+                toast.add({ severity: 'success', summary: 'Đăng ký', detail: 'Đăng ký người dùng mới thành công', life: 3000 });
+            }
+            await resetUser();
+        } catch (e) {
+            const summary = user.value.id ? 'Cập nhật' : 'Đăng kí';
+            const detail = user.value.id ? 'Cập nhật người dùng thất bại, email đã tồn tại' : 'Đăng kí người dùng mới thất bại, email đã tồn tại';
+            toast.add({ severity: 'error', summary, detail, life: 3000 });
         }
-        editDialog.value = false;
-        await refreshUser();
-        await userStore.apiGetCurrentUser();
-        user.value.email = '';
-        user.value.password = '';
-        user.value.role_id = 0;
     }
-    
 }
+
+
 
 const confirmDeleteUser = async(users: any) => {
     user.value = {...users};
@@ -81,6 +106,7 @@ const hideEdiDialog = async() => {
     user.value.email = '';
     user.value.full_name = '';
     user.value.password = '';
+    user.value.confirm_password = '';
     user.value.role_id = 0;
     editDialog.value = false;
     submitted.value = false;
@@ -107,6 +133,7 @@ watch(editDialog, (newValue) => {
         user.value.email = '';
         user.value.full_name = '';
         user.value.password = '';
+        user.value.confirm_password = '';
         user.value.role_id = 0;
       }
     });
@@ -173,9 +200,14 @@ onMounted(refreshUser)
                 <small class="p-error" v-if="submitted && !user.full_name">Họ và tên bắt buộc.</small>
             </div>
             <div class="field">
-                <label for="password">Password</label>
+                <label for="password">Mật khẩu</label>
                 <InputText id="password" type="password"v-model.trim="user.password" required="true" autofocus :class="{'p-invalid': submitted && !user.email}" />
-                <small class="p-error" v-if="submitted && !user.password">Password bắt buộc.</small>
+                <small class="p-error" v-if="submitted && !user.password">Mật khẩu bắt buộc.</small>
+            </div>
+            <div class="field">
+                <label for="confirmPassword">Xác nhận mật khẩu</label>
+                <InputText id="confirmPassword" type="password"v-model.trim="user.confirm_password" required="true" autofocus :class="{'p-invalid': submitted && !user.email}" />
+                <small class="p-error" v-if="submitted && !user.confirm_password">Xác nhận mật khẩu bắt buộc.</small>
             </div>
             <div class="field">
                 <label for="Role">Role</label>

@@ -104,7 +104,7 @@ const hideTrainDialog = async() => {
 
 const train = async() => {
     await trainFileStore.apiUpdateFile(fileTrain.value.id, fileTrainUpload.value);
-    toast.add({ severity: 'success', summary: 'Train', detail: 'Train success', life: 3000 });
+    toast.add({ severity: 'success', summary: 'Huấn luyện', detail: 'Huấn luyện chatbot thành công', life: 3000 });
     trainDialog.value = false;
     await refreshTrainFile();
 }
