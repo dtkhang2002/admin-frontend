@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRouter } from 'vue-router';
 import { useUser } from "../stores/userStore";
 import { useToast } from "primevue/usetoast";
@@ -22,28 +22,57 @@ const userUpdate = ref(
     }
 );
 
-const items = ref([
+const allItems = [
     {
         label: 'File',
         icon: 'pi pi-file',
-        route: '/file'
+        route: '/admin/file',
+        role: 1
     },
     {
         label: 'Lịch sử trò chuyện',
         icon: 'pi pi-history',
-        route: '/history'
+        route: '/admin/history',
+        role: 1
     },
     {
         label: 'Cài đặt',
         icon: 'pi pi-cog',
-        route: '/settings'
+        route: '/admin/settings',
+        role: 1
     },
     {
         label: 'Người dùng',
         icon: 'pi pi-user',
-        route: '/user'
+        route: '/admin/user',
+        role: 1
     },
-]);
+    {
+        label: 'Chatbot',
+        icon: 'pi pi-android',
+        route: '/',
+        role: 2
+    },
+    {
+        label: 'Lịch sử trò chuyện của tôi',
+        icon: 'pi pi-history',
+        route: '/history',
+        role: 2
+    },
+];
+
+const items = computed(() => {
+    const role = userStore.getCurrentUser.role_id;
+    return allItems.filter(item => {
+        if (item.role === 1) {
+            return role === 1;
+        } else if (item.role === 2) {
+            return role === 1 || role === 2;
+        } else {
+            return true;
+        }
+    });
+});
 
 const changePassword = async() => {
     changePasswordDialog.value = true;

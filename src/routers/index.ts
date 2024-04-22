@@ -4,32 +4,31 @@ import User from "../views/User.vue";
 import Settings from "../views/Settings.vue";
 import History from "../views/History.vue";
 import Login from "../views/Login.vue";
+import Chatbox from "../views/Chatbox.vue";
+import RegisterView from "../views/RegisterView.vue";
+import MyHistory from "../views/MyHistory.vue";
+import NotFound from "../views/NotFound.vue";
 
 export const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
-            path: "/",
+            path: "/admin/file",
             component: TrainFile,
             meta: { requiresAuth: true }
         },
         {
-            path: "/file",
-            component: TrainFile,
-            meta: { requiresAuth: true }
-        },
-        {
-            path: "/user",
+            path: "/admin/user",
             component: User,
             meta: { requiresAuth: true }
         },
         {
-            path: "/settings",
+            path: "/admin/settings",
             component: Settings,
             meta: { requiresAuth: true }
         },
         {
-            path: "/history",
+            path: "/admin/history",
             component: History,
             meta: { requiresAuth: true }
         },
@@ -42,7 +41,31 @@ export const router = createRouter({
             path: "/logout",
             component: Login,
             meta: { hideNavbar: true }
-        }
+        },
+        {
+            path: "/",
+            component: Chatbox,
+            meta: { requiresAuth: true }
+        },
+        {
+            path: "/register",
+            component: RegisterView,
+            meta: { hideNavbar: true }
+        },
+        {
+            path: "/history",
+            component: MyHistory,
+            meta: { requiresAuth: true }
+        },
+        {
+            path: "/not-authorized",
+            component: NotFound,
+            meta: { hideNavbar: true }
+        },
+        {
+            path: '/:pathMatch(.*)',
+            redirect: '/not-authorized'
+          }
     ]
 })
 
@@ -56,10 +79,22 @@ const isTokenExpired = (token: string): boolean => {
     }
 }
 
+const jwt_decode = (token: string): number => {
+    const jwt = JSON.parse(atob(token.split('.')[1]));
+    return jwt.role;
+}
+
 router.beforeEach((to, _from, next) => {
     const token = localStorage.getItem("access_token");
-
-    if (to.meta.requiresAuth && (!token || isTokenExpired(token))) {
+    
+    if (to.path.startsWith('/admin') && token) {
+        const userRole = jwt_decode(token);
+        if (userRole !== 1) {
+            next('/not-authorized');
+        } else {
+            next();
+        }
+    } else if (to.meta.requiresAuth && (!token || isTokenExpired(token))) {
         sessionStorage.setItem('savedPath', to.path);
         next({ path: '/login' });
     } else if (to.meta.guest && token && !isTokenExpired(token)) {

@@ -81,7 +81,9 @@ export const useUser = defineStore({
                 }
             })
         },
-        
+        async apiRegisterUser(params: UserCreate) {
+            await axios.post(`${import.meta.env.VITE_API_URL}/register/user`, params)
+        },
         async apiLogin(params: UserLogin) {
             const response = await axios.post(`${import.meta.env.VITE_API_URL}/login`, params);
             return response.data['access_token']

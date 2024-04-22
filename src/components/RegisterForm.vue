@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useUser } from '../stores/userStore';
-import { UserLogin } from '../interfaces/user';
+import { UserCreate } from '../interfaces/user';
 import {router} from '../routers';
 import { useToast } from "primevue/usetoast";
 import wave from "../assets/wave.png";
@@ -11,36 +11,35 @@ import avatar from "../assets/avatar.svg";
 const toast = useToast();
 const userStore = useUser();
 const email = ref("");
+const fullName = ref("");
 const password = ref("");
+const confirmPassword = ref("")
+const roleId = ref("1");
 const submitted = ref(false);
-const login = async() => {
+
+const register = async() => {
 	submitted.value = true;
-    let userLoginDetails: UserLogin = {
-        email: email.value,
-        password: password.value
-    };
-    try {
-        const token = await userStore.apiLogin(userLoginDetails);
-		const jwt = JSON.parse(atob(token.split('.')[1]));
-		
-        if (token && jwt.role == 1) {
-            toast.add({ severity: 'success', summary: 'Đăng nhập', detail: 'Đăng nhập thành công', life: 3000 });
-			setTimeout(() => {
-				localStorage.setItem("access_token", token);
-            	router.push("/admin/file");
-			}, 1000)  
-        } else if (token && jwt.role == 2) {
-			toast.add({ severity: 'success', summary: 'Đăng nhập', detail: 'Đăng nhập thành công', life: 3000 });
-			setTimeout(() => {
-				localStorage.setItem("access_token", token);
-            	router.push("/");
-			}, 1000)
-        } else {
-			throw new Error('Login failed');
+	let userRegisterDetails : UserCreate = {
+		full_name: fullName.value,
+		email: email.value,
+		password: password.value,
+		confirm_password: confirmPassword.value,
+		role_id: Number(roleId.value)
+	}
+	console.log(userRegisterDetails);
+	try {
+		console.log("Start check password");
+		if (password.value !== confirmPassword.value) {
+			toast.add({ severity: 'error', summary: 'Đăng ký', detail: 'Đăng ký người dùng mới thất bại, mật khẩu xác nhận không khớp', life: 3000 });
+			return; 
 		}
-    } catch (error) {
-        toast.add({ severity: 'error', summary: 'Đăng nhập', detail: 'Đăng nhập thất bại, email hoặc password bị sai', life: 3000 });
-    }   
+		console.log("Finish check password");
+		await userStore.apiRegisterUser(userRegisterDetails);
+		toast.add({ severity: 'success', summary: 'Đăng ký', detail: 'Đăng ký người dùng mới thành công', life: 3000 });
+		router.push("/login");
+	} catch (e) {
+		toast.add({ severity: 'error', summary: 'Đăng ký', detail: 'Đăng ký người dùng mới thất bại, email đã tồn tại', life: 3000 });
+	}
 }
 </script>
 
@@ -51,7 +50,7 @@ const login = async() => {
 			<img :src="bg">
 		</div>
 		<div class="login-content">
-			<form @submit.prevent="login">
+			<form @submit.prevent="register">
 				<img :src="avatar">
 				<h2 class="title">Welcome</h2>
            		<div class="input-div one">
@@ -59,8 +58,17 @@ const login = async() => {
            		   		<i class="fas fa-user"></i>
            		   </div>
            		   <div class="div">
-					<InputText type="text" class="input" placeholder="Email" v-model="email" required="true" autofocus :class="{'p-invalid': submitted && !email}"/>
+						<InputText type="text" class="input" placeholder="Email" v-model="email" required="true" autofocus :class="{'p-invalid': submitted && !email}"/>
 						<small class="p-error" v-if="submitted && !email">Email bắt buộc.</small>
+           		   </div>
+           		</div>
+				   <div class="input-div one">
+           		   <div class="i">
+           		   		<i class="fas fa-user"></i>
+           		   </div>
+           		   <div class="div">
+           		   		<InputText type="text" class="input" placeholder="Tên" v-model="fullName" required="true" autofocus :class="{'p-invalid': submitted && !fullName}"/>
+						<small class="p-error" v-if="submitted && !fullName">Tên bắt buộc.</small>
            		   </div>
            		</div>
            		<div class="input-div pass">
@@ -68,13 +76,26 @@ const login = async() => {
            		    	<i class="fas fa-lock"></i>
            		   </div>
            		   <div class="div">
-					<InputText type="password" class="input" placeholder="Mật khẩu" v-model="password" required="true" autofocus :class="{'p-invalid': submitted && !password}"/>
+						<InputText type="password" class="input" placeholder="Mật khẩu" v-model="password" required="true" autofocus :class="{'p-invalid': submitted && !password}"/>
 						<small class="p-error" v-if="submitted && !password">Mật khẩu bắt buộc.</small>
             	   </div>
             	</div>
+				<div class="input-div pass">
+           		   <div class="i"> 
+           		    	<i class="fas fa-lock"></i>
+           		   </div>
+           		   <div class="div">
+           		    	<InputText type="password" class="input" placeholder="Xác nhận mật khẩu" v-model="confirmPassword" required="true" autofocus :class="{'p-invalid': submitted && !confirmPassword}"/>
+						<small class="p-error" v-if="submitted && !confirmPassword">Xác nhận mật khẩu bắt buộc.</small>
+            	   </div>
+            	</div>
+				
+				<div class="div">
+    				<InputText type="hidden" class="input" placeholder="RoleId" v-model="roleId" :readonly="true"/>
+				</div>
 				<Toast/>
-				<Button severity="success" class="btn" icon="pi pi-sign-in" label="Đăng nhập" type="submit"></Button>
-				<router-link to="/register">Chưa có tài khoản, đăng ký ở đây</router-link>
+				<Button severity="success" class="btn" icon="pi pi-sign-in" label="Đăng ký" type="submit"></Button>
+				<router-link to="/login">Đã có tài khoản, đăng nhập tại đây</router-link>
             </form>
         </div>
     </div>

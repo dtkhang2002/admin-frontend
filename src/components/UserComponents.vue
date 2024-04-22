@@ -152,7 +152,7 @@ onMounted(refreshUser)
                     severity="success"
                     class="mr-2"
                     @click="openNewUser"
-                />
+                ></Button>
                 </template>
             </Toolbar>
             <DataTable ref="dt" :value="userStore.getListUser" dataKey="id" 
