@@ -14,7 +14,7 @@ const email = ref("");
 const fullName = ref("");
 const password = ref("");
 const confirmPassword = ref("")
-const roleId = ref("1");
+const roleId = ref("2");
 const submitted = ref(false);
 
 const register = async() => {
