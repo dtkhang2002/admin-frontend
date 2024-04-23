@@ -52,8 +52,8 @@ export const useHistory = defineStore({
             this.total = response.data.total;
             this.pages = response.data.pages;
         },
-        async deleteHistoryMe() {
-            await axios.delete(`${import.meta.env.VITE_API_URL}/history/me`, {
+        async deleteHistoryMe(data: object) {
+            await axios.put(`${import.meta.env.VITE_API_URL}/history/me`, data, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem("access_token")}`
                 }

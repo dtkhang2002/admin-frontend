@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
 import type {PageState} from "primevue/paginator";
 import { useHistory } from '../stores/historyStore';
@@ -7,12 +7,13 @@ import { useToast } from "primevue/usetoast";
 
 const toast = useToast();
 const historyStore = useHistory();
-const dt = ref();
+const selectedChatHistory = ref();
+const selectedIds = ref([]);
+const deleteDialog = ref(false);
 
 const filters = ref({
     'global': {value: null, matchMode: FilterMatchMode.CONTAINS},
 });
-
 
 const searchParam = reactive({
     page: 1,
@@ -25,11 +26,17 @@ const searchParam = reactive({
 });
 
 const deleteSearchParam = async() => {
-    searchParam.user_id = null;
-    searchParam.question = null;
-    searchParam.answer = null;
-    searchParam.start_at = null;
-    searchParam.end_at = null;
+    Object.assign(searchParam, {
+        user_id: null,
+        question: null,
+        answer: null,
+        start_at: null,
+        end_at: null
+    });
+}
+
+const openDeleteDialog = async() => {
+    deleteDialog.value = true;
 }
 
 const refreshHistory = async() => {
@@ -38,7 +45,7 @@ const refreshHistory = async() => {
 
 const changePage = async(event: PageState) => {
     searchParam.page = event.page + 1;
-    refreshHistory();
+    await refreshHistory();
 }
 
 const searchHistory = async() => {
@@ -46,13 +53,28 @@ const searchHistory = async() => {
     toast.add({ severity: 'success', summary: 'Tìm kiếm', detail: 'Tìm kiếm lịch sử thành công', life: 3000 });
 }
 
-onMounted(refreshHistory)
+const doDeleteFile = async() => {
+    await historyStore.deleteHistoryMe(selectedIds.value);
+    await refreshHistory();
+    selectedIds.value = [];
+    deleteDialog.value = false;
+}
+
+const hideDeleteDialog = async() => {
+    deleteDialog.value = false;
+
+}
+watch(selectedChatHistory, (newVal) => {
+    selectedIds.value = newVal.map((item: any) => item.id);
+    }, { deep: true });
+
+onMounted(refreshHistory);
 </script>
 
 <template>
     <div>
         <div class="card">
-            <DataTable ref="dt" :value="historyStore.getHistoryList" dataKey="id" 
+            <DataTable v-model:selection="selectedChatHistory" ref="dt" :value="historyStore.getHistoryList" dataKey="id" 
                 responsiveLayout="scroll"
                 :paginator="true" :rows="historyStore.getPageSize" :totalRecords="historyStore.getTotalRecord"
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
@@ -92,16 +114,21 @@ onMounted(refreshHistory)
                                 </div>
                             </div>
 
-                            <div class="align-items-center gap-2">
                                 <div class="flex justify-content-center align-items-center p-2" style="margin-left: auto">
                                     <Toast />
                                     <Button severity="danger" icon="pi pi-times"label="Xóa tìm kiếm" @click="deleteSearchParam"></Button>
+                                </div>
+
+                            <div class="align-items-center gap-2" v-if="selectedIds && selectedIds.length">
+                                <div class="flex justify-content-center align-items-center p-2" style="margin-right: auto">
+                                    <Toast />
+                                    <Button severity="danger" icon="pi pi-trash" label="Xóa lịch sử trò chuyện" @click="openDeleteDialog"></Button>
                                 </div>
                             </div>
                         </div>
                     </form>
                 </template>
-
+                <Column selectionMode="multiple" headerStyle="width: 1%"></Column>
                 <Column field="id" header="Id" style="width: 5%"></Column>
                 <Column field="user_id" header="Mã người hỏi" style="width: 10%"></Column>
                 <Column field="question" header="Câu hỏi" style="width: 20%"></Column>
@@ -112,8 +139,17 @@ onMounted(refreshHistory)
                     </template>
                 </Column>
             </DataTable>
-
         </div>
+        <Dialog v-model:visible="deleteDialog" :style="{width: '450px'}" header="Xác nhận xóa file huấn luyện" :modal="true">
+            <div class="confirmation-content">
+                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+                <span>Bạn chắc chắn muốn xóa lịch sử các cuộc trò chuyện ở trên?</span>
+            </div>
+            <template #footer>
+                <Button label="Không" icon="pi pi-times" text @click="hideDeleteDialog"/>
+                <Button label="Có" icon="pi pi-check" text @click="doDeleteFile" />
+            </template>
+        </Dialog>
     </div>
     
 </template>

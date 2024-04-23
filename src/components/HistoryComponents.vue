@@ -92,12 +92,11 @@ onMounted(refreshHistory)
                                     <label for="file-name-3" class="p-2">Đến: </label>
                                     <Calendar id="calendar-24h" v-model="searchParam.end_at" showTime hourFormat="24" />
                                 </div>
-                            </div>
-
-                            <div class="align-items-center gap-2">
-                                <div class="flex justify-content-center align-items-center p-2" style="margin-left: auto">
-                                    <Toast />
-                                    <Button severity="success" icon="pi pi-search" label="Tìm kiếm" type="submit"></Button>
+                                <div class="InputGroup">
+                                    <div class="flex justify-content-center align-items-center " style="margin-left: auto">
+                                        <Toast />
+                                        <Button severity="success" icon="pi pi-search" label="Tìm kiếm" type="submit"></Button>
+                                    </div>
                                 </div>
                             </div>
 

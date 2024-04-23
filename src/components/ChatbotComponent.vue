@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, ref } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 import userImg from '../assets/user.jpg'
 import chatbotImg from '../assets/chatbot.jpg'
 import { useMessage } from '../stores/messageStore';
@@ -19,15 +19,18 @@ const isChatbotTyping = ref(false);
 
 const sendQuestion = async() => {
     messages.value.push({ text: question.value, img: userImg, class: 'chat outgoing' });
-    messages.value.push({ text: '', img: chatbotImg, class: 'chat typing' });
     let questionAsk: Question = {
       question: question.value
     }
     question.value = "";
     isChatbotTyping.value = true;
+    messages.value.push({ text: '', img: chatbotImg, class: 'chat typing' });
     const answer = await chatbotStore.apiAskQuestion(questionAsk);
     messages.value.pop();
     messages.value.push({ text: answer, img: chatbotImg, class: 'chat incoming'});
+
+    // Save the entire chat history to localStorage
+    localStorage.setItem('chatHistory', JSON.stringify(messages.value));
 
     await nextTick();
     const container = document.querySelector('.chat-container');
@@ -38,9 +41,23 @@ const sendQuestion = async() => {
 }
 
 
+
 const deleteHistory = async() => {
   messages.value = [];
+  localStorage.removeItem('chatHistory');
 }
+
+const autoRefresh = async() => {
+  const storedChatHistoryItem = localStorage.getItem('chatHistory');
+  if (storedChatHistoryItem !== null) {
+    const storedChatHistory = JSON.parse(storedChatHistoryItem);
+    if (storedChatHistory) {
+        messages.value = storedChatHistory;
+    }
+  }
+}
+
+onMounted(autoRefresh)
 
 </script>
 
