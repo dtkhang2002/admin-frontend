@@ -266,7 +266,7 @@ button.material-symbols-rounded {
   border-radius: 4px;
   max-height: 250px;
   overflow-y: auto;
-  background: var(--incoming-chat-bg);
+  background: rgb(220, 226, 227);
   outline: 1px solid var(--incoming-chat-border);
 }
 .typing-textarea textarea::placeholder {
