@@ -29,16 +29,6 @@ export const useHistory = defineStore({
             this.total = response.data.total;
             this.pages = response.data.pages;
         },
-        async apiGetListHistoryByUserId(userId: string) {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/history/${userId}`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem("access_token")}`
-                }
-            });
-            this.items = response.data.items;
-            this.page = response.data.page;
-            this.size = response.data.size;
-        },
         async apiGetHistoryMe(params: object) {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/history/me`, {
                 params,
@@ -51,20 +41,6 @@ export const useHistory = defineStore({
             this.size = response.data.size;
             this.total = response.data.total;
             this.pages = response.data.pages;
-        },
-        async deleteHistoryMe(data: object) {
-            await axios.put(`${import.meta.env.VITE_API_URL}/history/me`, data, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem("access_token")}`
-                }
-            })
-        },
-        async deleteHistoryByUserId(user_id: string) {
-            await axios.delete(`${import.meta.env.VITE_API_URL}/history/${user_id}`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem("access_token")}`
-                }
-            })
         },
         async apiExportCSV(params: object) {
             const response = await axios.post(
@@ -93,8 +69,7 @@ export const useHistory = defineStore({
             document.body.appendChild(link);
             link.click();
             link.remove();
-        }
-        
+        },
         
     },
     getters: {

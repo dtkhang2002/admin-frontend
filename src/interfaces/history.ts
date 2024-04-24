@@ -11,6 +11,7 @@ export interface History {
     question: string;
     answer: string;
     user_id: string;
+    status: number;
     created_at: string;
     updated_at: string;
 }

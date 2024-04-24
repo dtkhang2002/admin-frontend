@@ -19,6 +19,16 @@ export const useMessage = defineStore({
             });
             return response.data.answer
         },
+
+        async apiClearSession() {
+            await axios.get(`${import.meta.env.VITE_API_URL}/chatbot`, 
+                {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem("access_token")}`
+                    }
+                }
+            );
+        }
     },
     getters: {
         getAnswer: (state) => state.answer,

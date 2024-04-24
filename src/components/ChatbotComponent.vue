@@ -45,6 +45,7 @@ const sendQuestion = async() => {
 const deleteHistory = async() => {
   messages.value = [];
   localStorage.removeItem('chatHistory');
+  await chatbotStore.apiClearSession();
 }
 
 const autoRefresh = async() => {
