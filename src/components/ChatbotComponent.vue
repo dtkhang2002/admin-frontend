@@ -16,6 +16,7 @@ interface Message {
 const question = ref("");
 const messages = ref<Message[]>([]);
 const isChatbotTyping = ref(false);
+const deleteDialog = ref(false);
 
 const sendQuestion = async() => {
     messages.value.push({ text: question.value, img: userImg, class: 'chat outgoing' });
@@ -43,9 +44,7 @@ const sendQuestion = async() => {
 
 
 const deleteHistory = async() => {
-  messages.value = [];
-  localStorage.removeItem('chatHistory');
-  await chatbotStore.apiClearSession();
+  deleteDialog.value = true;
 }
 
 const autoRefresh = async() => {
@@ -56,6 +55,17 @@ const autoRefresh = async() => {
         messages.value = storedChatHistory;
     }
   }
+}
+
+const hideDeleteDialog = async() => {
+  deleteDialog.value = false;
+}
+
+const doDeleteChatHistory = async() => {
+  messages.value = [];
+  localStorage.removeItem('chatHistory');
+  await chatbotStore.apiClearSession();
+  deleteDialog.value = false;
 }
 
 onMounted(autoRefresh)
@@ -91,17 +101,26 @@ onMounted(autoRefresh)
             <Textarea id="chat-input" spellcheck="false" placeholder="Nhập câu hỏi ở đây" required v-model="question" @keydown.enter="($event.shiftKey ? null : (sendQuestion(), $event.preventDefault()))" :disabled="isChatbotTyping"></Textarea>
             <Button icon="pi pi-send" severity="secondary" type="submit" outlined></Button>
           </div>
-          <div class="typing-controls">
+          <div class="typing-controls" v-if="messages.length !== 0">
             <Button icon="pi pi-trash" severity="danger" @click="deleteHistory" outlined></Button>
           </div>
       </div>
   </div>
 
+  <Dialog v-model:visible="deleteDialog" :style="{width: '450px'}" header="Xác nhận xóa phiên trò chuyện" :modal="true">
+            <div class="confirmation-content">
+                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+                <span>Bạn chắc chắn muốn xóa lịch sử cuộc trò chuyện này?</span>
+            </div>
+            <template #footer>
+                <Button label="Không" icon="pi pi-times" text @click="hideDeleteDialog"/>
+                <Button label="Có" icon="pi pi-check" text @click="doDeleteChatHistory" />
+            </template>
+        </Dialog>
 
 </template>
 
 <style scoped>
-/* Import Google font - Poppins */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 * {
   margin: 0;
