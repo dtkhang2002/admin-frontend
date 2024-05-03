@@ -19,6 +19,7 @@ const isChatbotTyping = ref(false);
 const deleteDialog = ref(false);
 
 const sendQuestion = async() => {
+  try {
     messages.value.push({ text: question.value, img: userImg, class: 'chat outgoing' });
     let questionAsk: Question = {
       question: question.value
@@ -29,7 +30,6 @@ const sendQuestion = async() => {
     const answer = await chatbotStore.apiAskQuestion(questionAsk);
     messages.value.pop();
     messages.value.push({ text: answer, img: chatbotImg, class: 'chat incoming'});
-
     // Save the entire chat history to localStorage
     localStorage.setItem('chatHistory', JSON.stringify(messages.value));
 
@@ -39,6 +39,10 @@ const sendQuestion = async() => {
         container.scrollTop = container.scrollHeight;
     }
     isChatbotTyping.value = false;
+  } catch (error) {
+      messages.value.pop();
+      messages.value.push({ text: 'Oops! Something went wrong while retrieving the response. Please try again. ', img: chatbotImg, class: 'chat error'});
+  }
 }
 
 
@@ -128,26 +132,6 @@ onMounted(autoRefresh)
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
-:root {
-  --text-color: #FFFFFF;
-  --icon-color: #ACACBE;
-  --icon-hover-bg: #5b5e71;
-  --placeholder-color: #dcdcdc;
-  --outgoing-chat-bg: #343541;
-  --incoming-chat-bg: #444654;
-  --outgoing-chat-border: #343541;
-  --incoming-chat-border: #444654;
-}
-.light-mode {
-  --text-color: #343541;
-  --icon-color: #a9a9bc;
-  --icon-hover-bg: #f1f1f3;
-  --placeholder-color: #6c6c6c;
-  --outgoing-chat-bg: #FFFFFF;
-  --incoming-chat-bg: #F7F7F8;
-  --outgoing-chat-border: #FFFFFF;
-  --incoming-chat-border: #D9D9E3;
-}
 body {
   background: var(--outgoing-chat-bg);
 }
@@ -177,7 +161,7 @@ body {
   height: 70vh;
   padding: 0 10px;
   text-align: center;
-  color: var(--text-color);
+  color: black;
 }
 .default-text h1 {
   font-size: 3.3rem;
@@ -190,15 +174,24 @@ body {
   padding: 25px 10px;
   display: flex;
   justify-content: center;
-  color: var(--text-color);
+  color: black;
 }
 .chat-container .chat.outgoing {
-  background: var(--outgoing-chat-bg);
-  border: 1px solid var(--outgoing-chat-border);
+  background: rgb(255, 255, 255);
+  border: 1px solid rgb(255, 255, 255);
 }
 .chat-container .chat.incoming {
-  background: var(--incoming-chat-bg);
-  border: 1px solid var(--incoming-chat-border);
+  background: rgb(239, 237, 237);
+  border: 1px solid rgb(239, 237, 237);
+}
+.chat-container .chat.error {
+  background: rgb(239, 237, 237);
+  border: 1px solid rgb(239, 237, 237);
+}
+
+.chat-container .chat.error p {
+  color: red;
+  font-weight: bold;
 }
 .chat .chat-content {
   display: flex;
@@ -235,7 +228,7 @@ button.material-symbols-rounded {
   white-space: pre-wrap;
   font-size: 1.05rem;
   padding: 0 50px 0 25px;
-  color: var(--text-color);
+  color: black;
   word-break: break-word;
 }
 .chat .chat-details p.error {
