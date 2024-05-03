@@ -45,8 +45,6 @@ const sendQuestion = async() => {
   }
 }
 
-
-
 const deleteHistory = async() => {
   deleteDialog.value = true;
 }
@@ -72,9 +70,28 @@ const doDeleteChatHistory = async() => {
   deleteDialog.value = false;
 }
 
-onMounted(autoRefresh)
+const clearMessageBox = async() => {
+  messages.value = [];
+  localStorage.removeItem('chatHistory');
+}
+
+const checkAndClearStorage = () => {
+  const lastRecordedDay = localStorage.getItem('lastRecordedDay');
+  const today = new Date().toISOString().split('T')[0];
+
+  if (lastRecordedDay !== today) {
+    localStorage.removeItem('chatHistory');
+    localStorage.setItem('lastRecordedDay', today);
+  }
+}
+
+onMounted(() => {
+  checkAndClearStorage();
+  autoRefresh();
+})
 
 </script>
+
 
 <template>
   <div class="chat-container">
@@ -107,6 +124,7 @@ onMounted(autoRefresh)
           </div>
           <div class="typing-controls" v-if="messages.length !== 0">
             <Button icon="pi pi-trash" severity="danger" @click="deleteHistory" outlined></Button>
+            <Button icon="pi pi-eraser" severity="danger" @click="clearMessageBox" outlined></Button>
           </div>
       </div>
   </div>

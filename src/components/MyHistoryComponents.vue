@@ -108,13 +108,6 @@ onMounted(refreshHistory);
                         {{ props.data.created_at }}
                     </template>
                 </Column>
-                <Column field="status" header="Trạng thái" style="width: 10%">
-                    <template #body="slotProps">
-                        <span :style="{color: slotProps.data.status === 0 ? 'red' : 'green'}">
-                            {{ slotProps.data.status === 0 ? 'Ngừng hoạt động' : 'Đang hoạt động' }}
-                        </span>
-                    </template>
-                </Column>
             </DataTable>
         </div>
     </div>
