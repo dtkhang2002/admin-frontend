@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { nextTick, onMounted, ref } from 'vue';
-import userImg from '../assets/user.jpg'
-import chatbotImg from '../assets/chatbot.jpg'
-import { useMessage } from '../stores/messageStore';
-import { Question } from '../interfaces/message';
+import { nextTick, onMounted, ref } from "vue";
+import userImg from "../assets/user.jpg";
+import chatbotImg from "../assets/chatbot.jpg";
+import { useMessage } from "../stores/messageStore";
+import { Question } from "../interfaces/message";
 
 const chatbotStore = useMessage();
 
@@ -18,132 +18,175 @@ const messages = ref<Message[]>([]);
 const isChatbotTyping = ref(false);
 const deleteDialog = ref(false);
 
-const sendQuestion = async() => {
+const sendQuestion = async () => {
   try {
-    messages.value.push({ text: question.value, img: userImg, class: 'chat outgoing' });
+    messages.value.push({
+      text: question.value,
+      img: userImg,
+      class: "chat outgoing",
+    });
     let questionAsk: Question = {
-      question: question.value
-    }
+      question: question.value,
+    };
     question.value = "";
     isChatbotTyping.value = true;
-    messages.value.push({ text: '', img: chatbotImg, class: 'chat typing' });
+    messages.value.push({ text: "", img: chatbotImg, class: "chat typing" });
     const answer = await chatbotStore.apiAskQuestion(questionAsk);
     messages.value.pop();
-    messages.value.push({ text: answer, img: chatbotImg, class: 'chat incoming'});
+    messages.value.push({
+      text: answer,
+      img: chatbotImg,
+      class: "chat incoming",
+    });
     // Save the entire chat history to localStorage
-    localStorage.setItem('chatHistory', JSON.stringify(messages.value));
+    localStorage.setItem("chatHistory", JSON.stringify(messages.value));
 
     await nextTick();
-    const container = document.querySelector('.chat-container');
+    const container = document.querySelector(".chat-container");
     if (container) {
-        container.scrollTop = container.scrollHeight;
+      container.scrollTop = container.scrollHeight;
     }
     isChatbotTyping.value = false;
   } catch (error) {
-      messages.value.pop();
-      messages.value.push({ text: 'Oops! Something went wrong while retrieving the response. Please try again. ', img: chatbotImg, class: 'chat error'});
+    messages.value.pop();
+    messages.value.push({
+      text:
+        "Oops! Something went wrong while retrieving the response. Please try again. ",
+      img: chatbotImg,
+      class: "chat error",
+    });
   }
-}
+};
 
-const deleteHistory = async() => {
+const deleteHistory = async () => {
   deleteDialog.value = true;
-}
+};
 
-const autoRefresh = async() => {
-  const storedChatHistoryItem = localStorage.getItem('chatHistory');
+const autoRefresh = async () => {
+  const storedChatHistoryItem = localStorage.getItem("chatHistory");
   if (storedChatHistoryItem !== null) {
     const storedChatHistory = JSON.parse(storedChatHistoryItem);
     if (storedChatHistory) {
-        messages.value = storedChatHistory;
+      messages.value = storedChatHistory;
     }
   }
-}
+};
 
-const hideDeleteDialog = async() => {
+const hideDeleteDialog = async () => {
   deleteDialog.value = false;
-}
+};
 
-const doDeleteChatHistory = async() => {
+const doDeleteChatHistory = async () => {
   messages.value = [];
-  localStorage.removeItem('chatHistory');
+  localStorage.removeItem("chatHistory");
   await chatbotStore.apiClearSession();
   deleteDialog.value = false;
-}
+};
 
-const clearMessageBox = async() => {
+const clearMessageBox = async () => {
   messages.value = [];
-  localStorage.removeItem('chatHistory');
-}
+  localStorage.removeItem("chatHistory");
+};
 
 const checkAndClearStorage = () => {
-  const lastRecordedDay = localStorage.getItem('lastRecordedDay');
-  const today = new Date().toISOString().split('T')[0];
+  const lastRecordedDay = localStorage.getItem("lastRecordedDay");
+  const today = new Date().toISOString().split("T")[0];
 
   if (lastRecordedDay !== today) {
-    localStorage.removeItem('chatHistory');
-    localStorage.setItem('lastRecordedDay', today);
+    localStorage.removeItem("chatHistory");
+    localStorage.setItem("lastRecordedDay", today);
   }
-}
+};
 
 onMounted(() => {
   checkAndClearStorage();
   autoRefresh();
-})
-
+});
 </script>
-
 
 <template>
   <div class="chat-container">
     <div class="default-text" v-if="messages.length === 0">
-        <h1>AI University Chatbot</h1>
-        <p>Start a conversation and explore the power of AI.<br> Your chat history will be displayed here.</p>
+      <h1>AI University Chatbot</h1>
+      <p>
+        Start a conversation and explore the power of AI.<br />
+        Your chat history will be displayed here.
+      </p>
     </div>
     <div v-for="(message, index) in messages" :key="index">
       <div :class="message.class">
-          <div class="chat-content">
-              <div class="chat-details">
-                  <img :src="message.img" alt="user-img">
-                  <p v-if="message.class !== 'chat typing'">{{ message.text }}</p>
-                  <div v-else class="typing-animation">
-                      <div class="typing-dot" style="--delay: 0.2s"></div>
-                      <div class="typing-dot" style="--delay: 0.3s"></div>
-                      <div class="typing-dot" style="--delay: 0.4s"></div>
-                  </div>
-              </div>
+        <div class="chat-content">
+          <div class="chat-details">
+            <img :src="message.img" alt="user-img" />
+            <p v-if="message.class !== 'chat typing'">{{ message.text }}</p>
+            <div v-else class="typing-animation">
+              <div class="typing-dot" style="--delay: 0.2s"></div>
+              <div class="typing-dot" style="--delay: 0.3s"></div>
+              <div class="typing-dot" style="--delay: 0.4s"></div>
+            </div>
           </div>
+        </div>
       </div>
     </div>
   </div>
-  
+
   <div class="typing-container">
-      <div class="typing-content">
-          <div class="typing-textarea">
-            <Textarea id="chat-input" spellcheck="false" placeholder="Nhập câu hỏi ở đây" required v-model="question" @keydown.enter="($event.shiftKey ? null : (sendQuestion(), $event.preventDefault()))" :disabled="isChatbotTyping"></Textarea>
-            <Button icon="pi pi-send" severity="secondary" type="submit" outlined></Button>
-          </div>
-          <div class="typing-controls" v-if="messages.length !== 0">
-            <Button icon="pi pi-trash" severity="danger" @click="deleteHistory" outlined></Button>
-            <Button icon="pi pi-eraser" severity="danger" @click="clearMessageBox" outlined></Button>
-          </div>
+    <div class="typing-content">
+      <div class="typing-textarea">
+        <Textarea
+          id="chat-input"
+          spellcheck="false"
+          placeholder="Nhập câu hỏi ở đây"
+          required
+          v-model="question"
+          @keydown.enter="
+            $event.shiftKey ? null : (sendQuestion(), $event.preventDefault())
+          "
+          :disabled="isChatbotTyping"
+        ></Textarea>
+        <Button
+          icon="pi pi-send"
+          severity="secondary"
+          type="submit"
+          outlined
+        ></Button>
       </div>
+      <div class="typing-controls" v-if="messages.length !== 0">
+        <Button
+          icon="pi pi-trash"
+          severity="danger"
+          @click="deleteHistory"
+          outlined
+        ></Button>
+        <Button
+          icon="pi pi-eraser"
+          severity="danger"
+          @click="clearMessageBox"
+          outlined
+        ></Button>
+      </div>
+    </div>
   </div>
 
-  <Dialog v-model:visible="deleteDialog" :style="{width: '450px'}" header="Xác nhận xóa phiên trò chuyện" :modal="true">
-            <div class="confirmation-content">
-                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-                <span>Bạn chắc chắn muốn xóa lịch sử cuộc trò chuyện này?</span>
-            </div>
-            <template #footer>
-                <Button label="Không" icon="pi pi-times" text @click="hideDeleteDialog"/>
-                <Button label="Có" icon="pi pi-check" text @click="doDeleteChatHistory" />
-            </template>
-        </Dialog>
-
+  <Dialog
+    v-model:visible="deleteDialog"
+    :style="{ width: '450px' }"
+    header="Xác nhận xóa phiên trò chuyện"
+    :modal="true"
+  >
+    <div class="confirmation-content">
+      <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+      <span>Bạn chắc chắn muốn xóa lịch sử cuộc trò chuyện này?</span>
+    </div>
+    <template #footer>
+      <Button label="Không" icon="pi pi-times" text @click="hideDeleteDialog" />
+      <Button label="Có" icon="pi pi-check" text @click="doDeleteChatHistory" />
+    </template>
+  </Dialog>
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
 * {
   margin: 0;
   padding: 0;
@@ -269,7 +312,8 @@ button.material-symbols-rounded {
   margin-left: 0;
 }
 @keyframes animateDots {
-  0%,44% {
+  0%,
+  44% {
     transform: translateY(0px);
   }
   28% {
@@ -358,7 +402,7 @@ button.material-symbols-rounded {
     font-size: 2.3rem;
   }
   :where(.default-text p, textarea, .chat p) {
-    font-size: 0.95rem!important;
+    font-size: 0.95rem !important;
   }
   .chat-container .chat {
     padding: 20px 10px;
@@ -386,7 +430,7 @@ button.material-symbols-rounded {
     margin-left: 5px;
   }
   button.material-symbols-rounded {
-    font-size: 1.25rem!important;
+    font-size: 1.25rem !important;
   }
-}
-</style>nextTick, onMounted, onUnmounted, 
+}</style
+>nextTick, onMounted, onUnmounted,

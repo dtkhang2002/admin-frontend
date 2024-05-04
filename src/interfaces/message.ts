@@ -1,13 +1,13 @@
 export interface Message {
-    text: string;
-    img: string;
+  text: string;
+  img: string;
 }
 
 export interface QA {
-    question: string;
-    answer: string;
+  question: string;
+  answer: string;
 }
 
 export interface Question {
-    question: string;
+  question: string;
 }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import TrainFileComponents from '../components/TrainFileComponents.vue';
+import TrainFileComponents from "../components/TrainFileComponents.vue";
 </script>
 
 <template>
-    <TrainFileComponents/>
+  <TrainFileComponents />
 </template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import ChatbotComponent from '../components/ChatbotComponent.vue';
+import ChatbotComponent from "../components/ChatbotComponent.vue";
 </script>
 
 <template>
-    <ChatbotComponent/>
+  <ChatbotComponent />
 </template>
