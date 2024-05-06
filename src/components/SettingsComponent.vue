@@ -59,7 +59,7 @@ const updateSettings = async () => {
       detail: "Cập nhật cấu hình thành công",
       life: 3000,
     });
-    router.push("/settings");
+    router.push("/admin/settings");
   }
 };
 const isButtonDisabled = computed(() => {
