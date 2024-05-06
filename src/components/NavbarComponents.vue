@@ -101,6 +101,7 @@ const updatenew_password = async () => {
       });
       setTimeout(() => {
         localStorage.removeItem("access_token");
+        localStorage.removeItem("chatHistory");
         router.push("/login");
       }, 1000);
     } catch (error) {

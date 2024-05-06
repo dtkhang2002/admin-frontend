@@ -111,7 +111,7 @@ const train = async() => {
 
 const doDeleteFile = async() => {
     await trainFileStore.apiDeleteFile(fileTrain.value.id);
-    toast.add({ severity: 'success', summary: 'Delete', detail: 'Delete file successfully', life: 3000 });
+    toast.add({ severity: 'success', summary: 'Xóa', detail: 'Xóa file thành công', life: 3000 });
     deleteDialog.value = false;
     await refreshTrainFile();
 }

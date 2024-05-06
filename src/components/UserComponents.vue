@@ -89,7 +89,7 @@ const updateUsers = async() => {
             await resetUser();
         } catch (e) {
             const summary = user.value.id ? 'Cập nhật' : 'Đăng kí';
-            const detail = user.value.id ? 'Cập nhật người dùng thất bại, email đã tồn tại' : 'Đăng kí người dùng mới thất bại, email đã tồn tại';
+            const detail = user.value.id ? 'Cập nhật người dùng thất bại thông tin cập nhật không hợp lệ' : 'Đăng kí người dùng mới thất bại, thông tin đăng ký không hợp lệ';
             toast.add({ severity: 'error', summary, detail, life: 3000 });
         }
     }
