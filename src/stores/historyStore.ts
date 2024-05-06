@@ -16,7 +16,7 @@ export const useHistory = defineStore({
   actions: {
     async apiGetListHistory(params: object) {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/history`,
+        `${import.meta.env.VITE_API_URL}/api/history`,
         {
           params,
           headers: {
@@ -32,7 +32,7 @@ export const useHistory = defineStore({
     },
     async apiGetHistoryMe(params: object) {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/history/me`,
+        `${import.meta.env.VITE_API_URL}/api/history/me`,
         {
           params,
           headers: {
@@ -48,7 +48,7 @@ export const useHistory = defineStore({
     },
     async apiExportCSV(params: object) {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/history/csv`,
+        `${import.meta.env.VITE_API_URL}/api/history/csv`,
         {},
         {
           params,

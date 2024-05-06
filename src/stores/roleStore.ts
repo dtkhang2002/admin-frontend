@@ -11,7 +11,7 @@ export const useRole = defineStore({
   },
   actions: {
     async apiGetListRole() {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/role`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/role`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },

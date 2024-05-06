@@ -15,7 +15,7 @@ export const useTrainFile = defineStore({
   },
   actions: {
     async apiGetListTrainFile(params: object) {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/file`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/file`, {
         params,
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -29,7 +29,7 @@ export const useTrainFile = defineStore({
     },
     async apiUploadFile(data: FormData) {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/file`,
+        `${import.meta.env.VITE_API_URL}/api/file`,
         data,
         {
           headers: {
@@ -42,7 +42,7 @@ export const useTrainFile = defineStore({
     },
     async apiUpdateFile(file_id: number, params: TrainFileUpdate) {
       await axios.put(
-        `${import.meta.env.VITE_API_URL}/file/${file_id}`,
+        `${import.meta.env.VITE_API_URL}/api/file/${file_id}`,
         params,
         {
           headers: {
@@ -52,7 +52,7 @@ export const useTrainFile = defineStore({
       );
     },
     async apiDeleteFile(file_id: number) {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/file/${file_id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/file/${file_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },

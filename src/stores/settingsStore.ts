@@ -23,7 +23,7 @@ export const useSettings = defineStore({
   actions: {
     async apiGetSettings() {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/settings`,
+        `${import.meta.env.VITE_API_URL}/api/settings`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -33,7 +33,7 @@ export const useSettings = defineStore({
       this.pageContent = response.data.pageContent;
     },
     async apiCreateSettings(params: SettingCreate) {
-      await axios.post(`${import.meta.env.VITE_API_URL}/settings`, params, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/settings`, params, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
@@ -41,7 +41,7 @@ export const useSettings = defineStore({
     },
     async apiUpdateSettings(params: SettingCreate, settings_id: number) {
       await axios.put(
-        `${import.meta.env.VITE_API_URL}/settings/${settings_id}`,
+        `${import.meta.env.VITE_API_URL}/api/settings/${settings_id}`,
         params,
         {
           headers: {

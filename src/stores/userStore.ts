@@ -25,7 +25,7 @@ export const useUser = defineStore({
   },
   actions: {
     async apiGetListUser(params: object) {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/user`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/user`, {
         params,
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -39,7 +39,7 @@ export const useUser = defineStore({
     },
 
     async apiGetCurrentUser() {
-      const response = axios.get(`${import.meta.env.VITE_API_URL}/user/me`, {
+      const response = axios.get(`${import.meta.env.VITE_API_URL}/api/user/me`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
@@ -48,7 +48,7 @@ export const useUser = defineStore({
     },
 
     async apiUpdateCurrentUser(params: UserUpdate) {
-      await axios.put(`${import.meta.env.VITE_API_URL}/user/me`, params, {
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/user/me`, params, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
@@ -56,7 +56,7 @@ export const useUser = defineStore({
     },
     async apiUpdateUserById(user_id: number, params: UserCreate) {
       await axios.put(
-        `${import.meta.env.VITE_API_URL}/user/${user_id}`,
+        `${import.meta.env.VITE_API_URL}/api/user/${user_id}`,
         params,
         {
           headers: {
@@ -66,7 +66,7 @@ export const useUser = defineStore({
       );
     },
     async apiDeleteUserById(user_id: number) {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/user/${user_id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/user/${user_id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
@@ -74,7 +74,7 @@ export const useUser = defineStore({
     },
     async apiRegister(params: UserCreate) {
       return await axios.post(
-        `${import.meta.env.VITE_API_URL}/register`,
+        `${import.meta.env.VITE_API_URL}/api/register`,
         params,
         {
           headers: {
@@ -84,11 +84,11 @@ export const useUser = defineStore({
       );
     },
     async apiRegisterUser(params: UserCreate) {
-      await axios.post(`${import.meta.env.VITE_API_URL}/register/user`, params);
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/register/user`, params);
     },
     async apiLogin(params: UserLogin) {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/login`,
+        `${import.meta.env.VITE_API_URL}/api/login`,
         params
       );
       return response.data["access_token"];

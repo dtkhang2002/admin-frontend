@@ -13,7 +13,7 @@ export const useMessage = defineStore({
   actions: {
     async apiAskQuestion(params: Question) {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/chatbot`,
+        `${import.meta.env.VITE_API_URL}/api/chatbot`,
         params,
         {
           headers: {
@@ -25,7 +25,7 @@ export const useMessage = defineStore({
     },
 
     async apiClearSession() {
-      await axios.get(`${import.meta.env.VITE_API_URL}/chatbot`, {
+      await axios.get(`${import.meta.env.VITE_API_URL}/api/chatbot`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
