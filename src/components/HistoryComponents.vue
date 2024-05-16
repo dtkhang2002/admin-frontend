@@ -4,6 +4,7 @@ import { FilterMatchMode } from 'primevue/api';
 import type {PageState} from "primevue/paginator";
 import { useHistory } from '../stores/historyStore';
 import { useToast } from "primevue/usetoast";
+import { parseISO, format } from 'date-fns';
 
 const toast = useToast();
 const historyStore = useHistory();
@@ -49,6 +50,12 @@ const searchHistory = async() => {
     await historyStore.apiGetListHistory(searchParam);
     toast.add({ severity: 'success', summary: 'Tìm kiếm', detail: 'Tìm kiếm lịch sử thành công', life: 3000 });
 }
+
+const formatDateTime = (dateString: string) => {
+      let dt_object = parseISO(dateString);
+      let formatted_dt = format(dt_object, 'yyyy-MM-dd HH:mm');
+      return formatted_dt;
+    }
 
 onMounted(refreshHistory)
 </script>
@@ -184,7 +191,7 @@ onMounted(refreshHistory)
         <Column field="answer" header="Câu trả lời" style="width: 20%"></Column>
         <Column field="created_at" header="Thời gian" style="width: 10%">
           <template #body="props">
-            {{ props.data.created_at }}
+            {{ formatDateTime(props.data.created_at) }}
           </template>
         </Column>
       </DataTable>

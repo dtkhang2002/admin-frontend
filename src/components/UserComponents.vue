@@ -5,6 +5,7 @@ import type {PageState} from "primevue/paginator";
 import { useUser } from '../stores/userStore';
 import { useRole } from '../stores/roleStore';
 import { useToast } from "primevue/usetoast";
+import { parseISO, format } from 'date-fns';
 
 const toast = useToast();
 const userStore = useUser();
@@ -95,8 +96,6 @@ const updateUsers = async() => {
     }
 }
 
-
-
 const confirmDeleteUser = async(users: any) => {
     user.value = {...users};
     deleteDialog.value = true;
@@ -127,6 +126,12 @@ const openNewUser = async() => {
     dialogHeader.header = 'Đăng ký người dùng mới';
     editDialog.value = true;
 }
+
+const formatDateTime = (dateString: string) => {
+      let dt_object = parseISO(dateString);
+      let formatted_dt = format(dt_object, 'yyyy-MM-dd HH:mm');
+      return formatted_dt;
+    }
 
 watch(editDialog, (newValue) => {
       if (!newValue) {
@@ -198,7 +203,10 @@ onMounted(refreshUser)
           field="created_at"
           header="Ngày tạo"
           style="width: 10%"
-        ></Column>
+        >
+        <template #body="props">
+            {{ formatDateTime(props.data.created_at) }}
+          </template></Column>
         <Column :exportable="false" style="width: 3%">
           <template #body="slotProps">
             <Toast />

@@ -4,6 +4,7 @@ import { FilterMatchMode } from 'primevue/api';
 import type {PageState} from "primevue/paginator";
 import { useTrainFile } from '../stores/trainFileStore';
 import { useToast } from "primevue/usetoast";
+import { parseISO, format } from 'date-fns';
 
 const toast = useToast();
 const trainFileStore = useTrainFile();
@@ -115,6 +116,12 @@ const doDeleteFile = async() => {
     deleteDialog.value = false;
     await refreshTrainFile();
 }
+
+const formatDateTime = (dateString: string) => {
+      let dt_object = parseISO(dateString);
+      let formatted_dt = format(dt_object, 'yyyy-MM-dd HH:mm');
+      return formatted_dt;
+    }
 
 watch(uploadFileDialog, (newValue) => {
       if (!newValue) {
@@ -233,7 +240,10 @@ onMounted(refreshTrainFile)
           field="created_at"
           header="Thời gian tải lên"
           style="width: 10%"
-        ></Column>
+        >
+        <template #body="props">
+            {{ formatDateTime(props.data.created_at) }}
+          </template></Column>
         <Column
           field="user_name"
           header="Người tải lên"
