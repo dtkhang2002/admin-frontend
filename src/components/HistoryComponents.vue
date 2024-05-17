@@ -21,8 +21,13 @@ const searchParam = reactive({
     user_id: null,
     question: null,
     answer: null,
-    start_at: null,
-    end_at: null
+    start_at: null as string | null,
+    end_at: null as string | null
+});
+
+const formattedSearchParam = reactive({
+    start_at: null as string | null,
+    end_at: null as string | null
 });
 
 const deleteSearchParam = async() => {
@@ -46,8 +51,37 @@ const changePage = async(event: PageState) => {
     refreshHistory();
 }
 
-const searchHistory = async() => {
-    await historyStore.apiGetListHistory(searchParam);
+const formatStartAtForAPI = (dateString: string | null) => {
+    if (!dateString) {
+        return null;
+    }
+    const date = new Date(dateString);
+    const pad = (num: number) => (num < 10 ? '0' + num : num);
+    const formattedDate = `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}T${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}:00.000Z`;
+    return formattedDate;
+}
+
+const formatEndAtForAPI = (dateString: string | null) => {
+    if (!dateString) {
+        return null;
+    }
+    const date = new Date(dateString);
+    const pad = (num: number) => (num < 10 ? '0' + num : num);
+    const formattedDate = `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}T${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}:59.999Z`;
+    return formattedDate;
+}
+
+const searchHistory = async () => {
+    formattedSearchParam.start_at = formatStartAtForAPI(searchParam.start_at);
+    formattedSearchParam.end_at = formatEndAtForAPI(searchParam.end_at);
+
+    const params = {
+        ...searchParam,
+        start_at: formattedSearchParam.start_at,
+        end_at: formattedSearchParam.end_at,
+    };
+
+    await historyStore.apiGetHistoryMe(params);
     toast.add({ severity: 'success', summary: 'Tìm kiếm', detail: 'Tìm kiếm lịch sử thành công', life: 3000 });
 }
 
