@@ -81,7 +81,7 @@ const searchHistory = async () => {
         end_at: formattedSearchParam.end_at,
     };
 
-    await historyStore.apiGetHistoryMe(params);
+    await historyStore.apiGetListHistory(params);
     toast.add({ severity: 'success', summary: 'Tìm kiếm', detail: 'Tìm kiếm lịch sử thành công', life: 3000 });
 }
 
